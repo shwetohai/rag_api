@@ -1,0 +1,9 @@
+.env
+.DS_Store
+radio_venv
+radio_v
+__pycache__/
+data.csv
+venv_radio/
+venv_rag
+rag_data.csv
