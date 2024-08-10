@@ -244,10 +244,10 @@ app.include_router(router)
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port = 8009)
 
-#python3 main.py
-#python main.py
+# python3 main.py
+# python main.py
+# uvicorn main:app --host 0.0.0.0 - defaults to port 8000
+# gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app - defaults to port 8000
 
-#gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
-# uvicorn main:app --host 0.0.0.0 --port 8010  this wins and that looses
-
-# if you are running
+# if you are running uvicorn main:app --host 0.0.0.0 whatever port you mention in main.py, it will not work
+# uvicorn main:app --host 0.0.0.0 --port 8010  this port mention wins and that main.py port looses
