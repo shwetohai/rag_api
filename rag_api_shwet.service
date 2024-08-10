@@ -1,0 +1,11 @@
+[Unit]
+Description=Gunicorn instance to serve rag_api
+After=network.target
+[Service]
+User=ec2-user
+Group=nginx
+WorkingDirectory=/home/ec2-user/rag_api
+Environment="PATH=/home/ec2-user/rag_api/venv_rag/bin"
+ExecStart=/home/ec2-user/rag_api/venv_rag/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+[Install]
+WantedBy=multi-user.target

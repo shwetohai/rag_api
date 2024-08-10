@@ -14,9 +14,18 @@ from llama_index.llms.openai import OpenAI
 
 from prompts import SYSTEM_PROMPT
 from tool import DoctorTool
+import logging
+from logging_config import setup_logging
+
+# If needed, ensure the logging is set up
+setup_logging()
+
+# Create a logger object
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv(find_dotenv())
+logger.info(f"\n\nduffer\n\n")
 
 
 class ToolSpec(BaseModel):
@@ -67,7 +76,7 @@ class AgentManager:
                 password=self.db_password,
                 database=self.db_name
             )
-            print(f"Successfully connected to the database '{self.db_name}'")
+            logger.info(f"Successfully connected to the database '{self.db_name}'")
 
             cursor = connection.cursor()
             cursor.execute(f"SELECT chat_conversation_id, user_id, message, type, meta_data, inserted_time FROM chat WHERE chat_conversation_id = {chat_conversation_id} ORDER BY inserted_time")
@@ -75,13 +84,13 @@ class AgentManager:
             column_names = [i[0] for i in cursor.description]
             df = pd.DataFrame(records, columns=column_names)
         except mysql.connector.Error as e:
-            print(f"Error: {e}")
+            logger.info(f"Error: {e}")
             df = pd.DataFrame()
         finally:
             if connection.is_connected():
                 cursor.close()
                 connection.close()
-                print("Database connection closed")
+                logger.info("Database connection closed")
 
         return df
 
@@ -109,7 +118,7 @@ class AgentManager:
 
             return chat_messages[-10:-1]
         except Exception as e:
-            print(e)
+            logger.info(e)
             return []
 
     def build_agent(self, consumer_id, chat_conversation_id) -> OpenAIAgent:
@@ -130,7 +139,7 @@ class AgentManager:
 
         llm = OpenAI(model="gpt-4o", temperature=0)
         #chat_history_from_db = self.get_chat_history_from_db(consumer_id, chat_conversation_id)
-        #print(f"\n\nchat history is\n {chat_history_from_db}\n\n")
+        #logger.info(f"\n\nchat history is\n {chat_history_from_db}\n\n")
         agent = OpenAIAgent.from_tools(
             tools,
             llm=llm,
